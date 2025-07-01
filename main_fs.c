@@ -1,11 +1,9 @@
 #include "filesystem.h"
 
-// Variável global para diretório atual
 Directory* current_dir = NULL;
 Directory* root_dir = NULL;
 char current_path[1024] = "/";
 
-// Stack para navegação (implementação simples)
 typedef struct DirStack {
     Directory* dir;
     char path[1024];
@@ -33,7 +31,6 @@ void print_help() {
     printf("=====================================\n\n");
 }
 
-// Função recursiva para salvar a árvore
 void save_tree_recursive(FILE* file, BTreeNode* node, int depth) {
     if (!node) return;
     
@@ -42,7 +39,6 @@ void save_tree_recursive(FILE* file, BTreeNode* node, int depth) {
             save_tree_recursive(file, node->children[i], depth + 1);
         }
         
-        // Imprime indentação
         for (int d = 0; d < depth; ++d) {
             fprintf(file, "    ");
         }
@@ -50,11 +46,9 @@ void save_tree_recursive(FILE* file, BTreeNode* node, int depth) {
         TreeNode* item = node->keys[i];
         if (item->type == DIRECTORY_TYPE) {
             fprintf(file, "├── %s/\n", item->name);
-            // Salva conteúdo do diretório recursivamente
             save_tree_recursive(file, item->data.directory->tree->root, depth + 1);
         } else {
             fprintf(file, "├── %s (%zu bytes)\n", item->name, item->data.file->size);
-            // Opcionalmente, pode salvar o conteúdo do arquivo
             if (strlen(item->data.file->content) > 0) {
                 for (int d = 0; d <= depth; ++d) {
                     fprintf(file, "    ");
@@ -83,7 +77,6 @@ void save_filesystem(Directory* root) {
     }
 }
 
-// Funções para gerenciar stack de diretórios
 void push_directory(Directory* dir, const char* path) {
     DirStack* new_entry = (DirStack*)malloc(sizeof(DirStack));
     new_entry->dir = dir;
@@ -121,12 +114,11 @@ void show_file_content(const char* filename) {
 }
 
 int main() {
-    // Inicialização do sistema
     Directory* root = get_root_directory();
     current_dir = root;
     root_dir = root;
     
-    printf("🗂️  Sistema de Arquivos Virtual Iniciado!\n");
+    printf("Sistema de Arquivos Virtual Iniciado!\n");
     print_help();
     
     char input[256];
@@ -140,10 +132,8 @@ int main() {
             break;
         }
         
-        // Remove newline
         input[strcspn(input, "\n")] = 0;
         
-        // Parse do comando
         memset(command, 0, sizeof(command));
         memset(arg1, 0, sizeof(arg1));
         memset(arg2, 0, sizeof(arg2));
@@ -152,7 +142,6 @@ int main() {
             continue;
         }
         
-        // Processamento dos comandos
         if (strcmp(command, "help") == 0) {
             print_help();
         }
@@ -174,7 +163,6 @@ int main() {
                 continue;
             }
             
-            // Verifica se já existe
             if (btree_search(current_dir->tree, arg1)) {
                 printf("'%s' já existe.\n", arg1);
                 continue;
@@ -197,7 +185,6 @@ int main() {
                 continue;
             }
             
-            // Verifica se já existe
             if (btree_search(current_dir->tree, arg1)) {
                 printf("'%s' já existe.\n", arg1);
                 continue;
@@ -213,7 +200,6 @@ int main() {
                 continue;
             }
             
-            // Verifica se já existe
             if (btree_search(current_dir->tree, arg1)) {
                 printf("'%s' já existe.\n", arg1);
                 continue;
@@ -258,11 +244,9 @@ int main() {
                 continue;
             }
             
-            // Salva diretório atual na stack antes de navegar
             push_directory(current_dir, current_path);
             
             current_dir = target->data.directory;
-            // Atualiza o path (simplificado)
             char new_path[1024];
             if (strcmp(current_path, "/") == 0) {
                 snprintf(new_path, sizeof(new_path), "/%s", arg1);
@@ -278,7 +262,7 @@ int main() {
         else if (strcmp(command, "exit") == 0) {
             printf("Salvando sistema de arquivos...\n");
             save_filesystem(root);
-            printf("Saindo do sistema de arquivos virtual. Até logo! 👋\n");
+            printf("Saindo do sistema de arquivos virtual. Até logo! \n");
             break;
         }
         else if (strlen(command) > 0) {

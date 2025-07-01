@@ -78,4 +78,4 @@ Aqui estão todos os comandos que você pode usar no shell interativo:
 | `exit`                                | Salva o estado atual e encerra o programa.                    | `/$ exit`                                         |
 
 ---
-Feito com ❤️ por `Pedro Kons`. 
+Feito com ❤️ por `Pedro Kons e Guilherme Thommy`. 
